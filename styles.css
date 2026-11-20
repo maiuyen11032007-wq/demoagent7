@@ -1,0 +1,365 @@
+:root {
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-800: #1e40af;
+  --blue-900: #1e3a8a;
+  --sky-500: #0ea5e9;
+  --cyan-500: #06b6d4;
+  --navy-950: #0b1528;
+
+  --bg-main: #f3f7ff;
+  --surface-glass: rgba(255, 255, 255, 0.84);
+  --surface-strong: rgba(255, 255, 255, 0.96);
+  --border-glass: rgba(147, 197, 253, 0.45);
+  --shadow-soft: 0 14px 38px -12px rgba(30, 64, 175, 0.14);
+  --shadow-card: 0 8px 24px -8px rgba(37, 99, 235, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-main);
+  background-image:
+    radial-gradient(at 10% 10%, rgba(59, 130, 246, 0.14) 0px, transparent 48%),
+    radial-gradient(at 90% 15%, rgba(14, 165, 233, 0.14) 0px, transparent 44%),
+    radial-gradient(at 50% 90%, rgba(37, 99, 235, 0.08) 0px, transparent 52%);
+  color: #0f172a;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.tech-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(37, 99, 235, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(37, 99, 235, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Glassmorphism Shells */
+.glass-shell {
+  background: var(--surface-glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-soft);
+}
+
+.glass-card {
+  background: var(--surface-strong);
+  border: 1px solid rgba(191, 219, 254, 0.7);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(59, 130, 246, 0.55);
+  box-shadow: 0 14px 30px -10px rgba(37, 99, 235, 0.2);
+}
+
+/* Window Dots */
+.win-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.win-dots span {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  display: inline-block;
+}
+.win-dots .dot-1 { background: #60a5fa; }
+.win-dots .dot-2 { background: #38bdf8; }
+.win-dots .dot-3 { background: #2563eb; }
+
+/* Primary & Secondary Buttons */
+.btn-azure {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 14px;
+  padding: 0.65rem 1.25rem;
+  box-shadow: 0 10px 22px -6px rgba(37, 99, 235, 0.45);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn-azure:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px -6px rgba(37, 99, 235, 0.55);
+  filter: brightness(1.05);
+}
+.btn-azure:active {
+  transform: translateY(0);
+}
+
+.btn-outline-azure {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  font-weight: 700;
+  border-radius: 14px;
+  padding: 0.55rem 1.05rem;
+  transition: all 0.18s ease;
+  cursor: pointer;
+}
+.btn-outline-azure:hover {
+  background: #eff6ff;
+  border-color: #60a5fa;
+}
+
+/* Top Floating Header & Stepper */
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.nav-pill:hover {
+  color: #1d4ed8;
+  background: rgba(219, 234, 254, 0.55);
+}
+.nav-pill.is-active {
+  background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 16px -4px rgba(37, 99, 235, 0.4);
+}
+.nav-pill .step-num {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+}
+.nav-pill.is-active .step-num {
+  background: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+
+/* Scene Transitions */
+.app-scene {
+  display: none;
+  animation: sceneFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.app-scene.scene-active {
+  display: block;
+}
+
+@keyframes sceneFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dropzone */
+.dropzone-area {
+  border: 2px dashed #93c5fd;
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.7) 0%, rgba(255, 255, 255, 0.85) 100%);
+  transition: all 0.22s ease;
+}
+.dropzone-area.is-dragover {
+  border-color: #2563eb;
+  background: rgba(219, 234, 254, 0.75);
+  transform: scale(1.01);
+}
+
+/* Workspace Tabs */
+.ws-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #475569;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.ws-tab-btn:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.ws-tab-btn.is-active {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 6px 14px -4px rgba(37, 99, 235, 0.38);
+}
+
+.ws-tab-panel {
+  display: none;
+}
+.ws-tab-panel.is-active {
+  display: block;
+  animation: sceneFadeIn 0.24s ease;
+}
+
+/* Pipeline Pulse Ring */
+.hud-ring {
+  position: absolute;
+  border-radius: 999px;
+  border: 2px dashed rgba(37, 99, 235, 0.35);
+  animation: spinSlow 14s linear infinite;
+}
+.hud-ring-inner {
+  inset: 8px;
+  border-style: solid;
+  border-color: rgba(14, 165, 233, 0.3) transparent rgba(37, 99, 235, 0.5) transparent;
+  animation: spinSlow 7s linear infinite reverse;
+}
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Floating AI Copilot Chat */
+.chat-fab {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 45;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 0 14px 32px -6px rgba(29, 78, 216, 0.55);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.chat-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px -6px rgba(29, 78, 216, 0.65);
+}
+
+.chat-drawer {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: min(410px, calc(100vw - 24px));
+  height: min(600px, calc(100vh - 96px));
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 24px 56px -12px rgba(15, 23, 42, 0.32);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(219, 234, 254, 0.35);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.42);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 99, 235, 0.7);
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+  }
+  .glass-shell, .glass-card {
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+}
+
+/* Business Analysis Report: Standard 13pt body typography */
+#wsTab-executive p,
+#wsTab-executive li,
+#wsTab-executive td,
+#wsTab-executive th,
+#wsTab-executive div.text-xs,
+#wsTab-executive div.text-sm {
+  font-size: 13pt;
+  line-height: 1.55;
+}
+#wsTab-executive h3 {
+  font-size: 14pt;
+}
+#wsTab-executive h4,
+#wsTab-executive h5 {
+  font-size: 13pt;
+}
+
+/* Balanced, harmonious typography for HITL Review Gates 1 & 2 */
+#humanReviewGate h3,
+#humanAnalysisGate h3 {
+  font-size: 1.05rem;
+}
+#humanReviewGate #reviewCleanSummary > div > div:first-child {
+  font-size: 0.8125rem;
+}
+#humanReviewGate #reviewCleanSummary > div > div:last-child {
+  font-size: 1.125rem;
+}
+#humanReviewGate p,
+#humanReviewGate label,
+#humanReviewGate span,
+#humanReviewGate textarea,
+#humanReviewGate button,
+#humanReviewGate td,
+#humanReviewGate th,
+#humanReviewGate .text-xs,
+#humanAnalysisGate p,
+#humanAnalysisGate label,
+#humanAnalysisGate span,
+#humanAnalysisGate textarea,
+#humanAnalysisGate button,
+#humanAnalysisGate .text-xs {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+#humanReviewGate #humanCleanFeedback,
+#humanAnalysisGate #analysisRevisionFeedback {
+  font-size: 0.8125rem;
+}

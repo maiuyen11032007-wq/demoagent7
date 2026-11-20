@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AzurePulse AI · Data Analysis & BI Agent Studio</title>
+  <meta name="description"
+    content="AI Agent phân tích dữ liệu thông minh theo bối cảnh doanh nghiệp: làm sạch, dashboard đa chiều, ma trận quyết định và báo cáo quản trị." />
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%232563eb'/%3E%3Cstop offset='100%25' stop-color='%230ea5e9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M12 36h10l6-14 8 22 6-12h10' fill='none' stroke='white' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body class="tech-grid-bg flex flex-col min-h-screen">
+
+  <!-- TOP FLOATING HEADER & STEPPER -->
+  <header class="sticky top-0 z-40 px-3 sm:px-6 pt-3 pb-2 no-print">
+    <div
+      class="glass-shell max-w-7xl mx-auto rounded-2xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="goToScene(0)">
+        <div
+          class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 text-white flex items-center justify-center shadow-md shadow-blue-500/30">
+          <i class="fa-solid fa-wave-square text-base"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-slate-900 text-sm sm:text-base tracking-tight">AzurePulse <span
+                class="text-blue-600">AI</span></span>
+            <span
+              class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[10px] font-bold text-blue-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-ping"></span>
+              Decision BI Agent
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-500 font-medium hidden sm:block">Phân tích dữ liệu theo Bối cảnh Doanh nghiệp
+          </p>
+        </div>
+      </div>
+
+      <!-- 4-Step Spatial Stepper -->
+      <nav class="flex items-center gap-1 overflow-x-auto py-0.5" aria-label="Quy trình phân tích">
+        <button type="button" class="nav-pill is-active" data-scene-btn="0" onclick="goToScene(0)">
+          <span class="step-num">1</span>
+          <span>Tổng quan</span>
+        </button>
+        <i class="fa-solid fa-chevron-right text-[10px] text-blue-300 hidden sm:inline"></i>
+        <button type="button" class="nav-pill" data-scene-btn="1" onclick="goToScene(1)">
+          <span class="step-num">2</span>
+          <span>Bối cảnh &amp; Dữ liệu</span>
+        </button>
+        <i class="fa-solid fa-chevron-right text-[10px] text-blue-300 hidden sm:inline"></i>
+        <button type="button" class="nav-pill" data-scene-btn="2" onclick="goToScene(2)">
+          <span class="step-num">3</span>
+          <span>AI Xử lý</span>
+        </button>
+        <i class="fa-solid fa-chevron-right text-[10px] text-blue-300 hidden sm:inline"></i>
+        <button type="button" class="nav-pill" data-scene-btn="3" onclick="goToScene(3)">
+          <span class="step-num">4</span>
+          <span>Dashboard &amp; Quyết định</span>
+        </button>
+      </nav>
+
+      <!-- Utility Actions -->
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="openHistoryModal()" class="btn-outline-azure !py-1.5 !px-3 text-xs"
+          title="Lịch sử phân tích">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <span class="hidden md:inline">Lịch sử</span>
+        </button>
+        <span id="apiHeaderBadge"
+          class="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold">AI
+          Sẵn sàng ✓</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN SPATIAL VIEWPORT -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-5">
+
+    <!-- ==================== SCENE 0: OVERVIEW ==================== -->
+    <section id="scene0" class="app-scene scene-active space-y-6">
+      <div class="glass-shell rounded-3xl p-6 sm:p-9 relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-blue-500/10 blur-2xl pointer-events-none">
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+          <div class="lg:col-span-7 space-y-4">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-xs font-bold text-blue-700">
+              <i class="fa-solid fa-compass text-sky-500"></i>
+              <span>Context-Driven BI · Hỗ trợ Ra quyết định Quản trị</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight tracking-tight">
+              Phân tích dữ liệu sâu theo <span
+                class="bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">Bối cảnh &amp; Mục tiêu
+                Doanh nghiệp</span>
+            </h1>
+            <p class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl">
+              Để đảm bảo báo cáo đi đúng trọng tâm quản trị, bạn cần cung cấp <strong>Bối cảnh doanh nghiệp</strong>
+              (ngành nghề, mục tiêu, câu hỏi cần giải đáp) cùng <strong>File dữ liệu (.xlsx, .csv, .json)</strong>. AI
+              Agent sẽ phân tích đa chiều, phát hiện bất thường và đề xuất Ma trận Quyết định cụ thể.
+            </p>
+            <div class="flex flex-wrap items-center gap-3 pt-1">
+              <button type="button" onclick="goToScene(1)" class="btn-azure text-sm">
+                <i class="fa-solid fa-arrow-right"></i>
+                <span>Thiết lập Bối cảnh &amp; Nạp dữ liệu</span>
+              </button>
+              <button type="button" onclick="prepareSampleInScene1('retail_sales')" class="btn-outline-azure text-sm">
+                <i class="fa-solid fa-flask text-sky-500"></i>
+                <span>Nạp thử Dữ liệu Mẫu</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5">
+            <div class="glass-card rounded-2xl p-5 space-y-4 bg-gradient-to-br from-white to-blue-50/70">
+              <div class="flex items-center justify-between border-b border-blue-100 pb-3">
+                <div class="flex items-center gap-2">
+                  <div class="win-dots"><span class="dot-1"></span><span class="dot-2"></span><span
+                      class="dot-3"></span></div>
+                  <span class="text-xs font-bold text-slate-700">Chiều sâu Phân tích Quản trị</span>
+                </div>
+                <span class="text-[11px] font-bold text-blue-600 bg-blue-100/80 px-2 py-0.5 rounded-md">4 Tầng BI</span>
+              </div>
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="p-3 rounded-xl bg-white border border-blue-100">
+                  <div class="text-blue-600 font-extrabold text-sm mb-0.5"><i class="fa-solid fa-chart-pie mr-1"></i>
+                    Pareto 80/20</div>
+                  <p class="text-slate-500">Đo mức độ tập trung &amp; phụ thuộc vào nhóm dẫn đầu.</p>
+                </div>
+                <div class="p-3 rounded-xl bg-white border border-blue-100">
+                  <div class="text-sky-600 font-extrabold text-sm mb-0.5"><i
+                      class="fa-solid fa-scale-balanced mr-1"></i> Hiệu suất Kép</div>
+                  <p class="text-slate-500">So sánh Đầu ra vs Chi phí &amp; Biên lợi nhuận từng nhóm.</p>
+                </div>
+                <div class="p-3 rounded-xl bg-white border border-blue-100">
+                  <div class="text-indigo-600 font-extrabold text-sm mb-0.5"><i class="fa-solid fa-radar mr-1"></i> Bắt
+                    Ngoại lai</div>
+                  <p class="text-slate-500">Chỉ rõ từng dòng dữ liệu có chỉ số bất thường (IQR).</p>
+                </div>
+                <div class="p-3 rounded-xl bg-white border border-blue-100">
+                  <div class="text-cyan-600 font-extrabold text-sm mb-0.5"><i class="fa-solid fa-chess mr-1"></i> Ma
+                    trận Quyết định</div>
+                  <p class="text-slate-500">Phân loại nhóm Nhân rộng · Tối ưu · Kiểm soát rủi ro.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample Datasets Launchpad -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base sm:text-lg font-extrabold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-database text-blue-600"></i>
+            <span>Bộ dữ liệu mẫu (Nạp vào bước Thiết lập)</span>
+          </h2>
+          <span class="text-xs text-slate-500 font-medium">Kèm bối cảnh doanh nghiệp tham khảo</span>
+        </div>
+        <div id="sampleCardsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCENE 1: MANDATORY CONTEXT + DATA INGESTION ==================== -->
+    <section id="scene1" class="app-scene space-y-5">
+      <div class="glass-shell rounded-3xl p-6 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-blue-100 pb-4">
+          <div>
+            <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">Bước 2 · Bối cảnh Doanh nghiệp &amp; Nạp Dữ
+              liệu (Bắt buộc)</h2>
+            <p class="text-xs sm:text-sm text-slate-500">Hoàn thành cả 2 phần bên dưới để AI Agent hiểu đúng bài toán và
+              kích hoạt phân tích chuyên sâu.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <span id="checkCtxBadge" class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 font-bold"><i
+                class="fa-regular fa-circle mr-1"></i> Bối cảnh: Chưa đủ</span>
+            <span id="checkDataBadge" class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 font-bold"><i
+                class="fa-regular fa-circle mr-1"></i> Dữ liệu: Chưa có</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- LEFT COLUMN: MANDATORY BUSINESS CONTEXT -->
+          <div class="lg:col-span-5 glass-card rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-blue-100 pb-2.5">
+              <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                <span
+                  class="w-6 h-6 rounded-lg bg-blue-600 text-white text-xs flex items-center justify-center">A</span>
+                <span>Bối cảnh Doanh nghiệp <span class="text-rose-500">*</span></span>
+              </h3>
+              <button type="button" onclick="fillSampleContext()"
+                class="text-[11px] font-bold text-blue-600 hover:underline">
+                Điền mẫu tham khảo
+              </button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+              <div>
+                <label for="ctxCompanyName" class="block font-bold text-slate-700 mb-1">Tên doanh nghiệp / Đơn vị <span
+                    class="text-rose-500">*</span></label>
+                <input id="ctxCompanyName" type="text" oninput="validateReadiness()"
+                  placeholder="VD: Công ty TNHH TMĐT BlueRetail"
+                  class="w-full rounded-xl border border-blue-200 bg-white px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400" />
+              </div>
+
+              <div>
+                <label for="ctxIndustry" class="block font-bold text-slate-700 mb-1">Ngành nghề / Lĩnh vực <span
+                    class="text-rose-500">*</span></label>
+                <select id="ctxIndustry" onchange="onContextSelectChange('industry')"
+                  class="w-full rounded-xl border border-blue-200 bg-white px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400">
+                  <option value="">-- Chọn lĩnh vực --</option>
+                  <option value="Thương mại điện tử & Bán lẻ">Thương mại điện tử &amp; Bán lẻ</option>
+                  <option value="Marketing & Truyền thông số">Marketing &amp; Truyền thông số</option>
+                  <option value="Tài chính & SaaS">Tài chính &amp; SaaS</option>
+                  <option value="Nhân sự & Vận hành">Nhân sự &amp; Vận hành</option>
+                  <option value="Sản xuất & Chuỗi cung ứng">Sản xuất &amp; Chuỗi cung ứng</option>
+                  <option value="__other__">Lĩnh vực khác (Tự nhập...)</option>
+                </select>
+                <input id="ctxIndustryCustom" type="text" oninput="validateReadiness()"
+                  placeholder="Nhập ngành nghề / lĩnh vực của bạn..."
+                  class="hidden mt-2 w-full rounded-xl border border-blue-300 bg-blue-50/40 px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400" />
+              </div>
+
+              <div>
+                <label for="ctxObjective" class="block font-bold text-slate-700 mb-1">Mục tiêu quản trị trọng tâm <span
+                    class="text-rose-500">*</span></label>
+                <select id="ctxObjective" onchange="onContextSelectChange('objective')"
+                  class="w-full rounded-xl border border-blue-200 bg-white px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400">
+                  <option value="">-- Chọn mục tiêu --</option>
+                  <option value="Tối ưu doanh thu & biên lợi nhuận">Tối ưu doanh thu &amp; biên lợi nhuận</option>
+                  <option value="Kiểm soát chi phí & tỷ lệ hoàn/rủi ro">Kiểm soát chi phí &amp; tỷ lệ hoàn/rủi ro
+                  </option>
+                  <option value="Tối ưu ROAS & Phân bổ ngân sách quảng cáo">Tối ưu ROAS &amp; Phân bổ ngân sách</option>
+                  <option value="Đánh giá hiệu suất phòng ban & cân bằng tải công việc">Đánh giá hiệu suất &amp; KPI
+                    nhân sự</option>
+                  <option value="Mở rộng thị trường & giảm phụ thuộc 1 kênh">Đa dạng hóa kênh &amp; mở rộng thị trường
+                  </option>
+                  <option value="__other__">Mục tiêu khác (Tự nhập...)</option>
+                </select>
+                <input id="ctxObjectiveCustom" type="text" oninput="validateReadiness()"
+                  placeholder="Nhập mục tiêu quản trị của bạn..."
+                  class="hidden mt-2 w-full rounded-xl border border-blue-300 bg-blue-50/40 px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400" />
+              </div>
+
+              <div>
+                <label for="ctxQuestion" class="block font-bold text-slate-700 mb-1">Câu hỏi nhà quản trị cần AI giải
+                  đáp <span class="text-rose-500">*</span></label>
+                <textarea id="ctxQuestion" rows="3" oninput="validateReadiness()"
+                  placeholder="VD: Kênh bán nào đang mang lại biên lợi nhuận tốt nhất? Nhóm nào có rủi ro chi phí/hoàn hàng cao cần xử lý ngay?"
+                  class="w-full rounded-xl border border-blue-200 bg-white p-3 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: DATA FILE UPLOAD & PREVIEW -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="glass-card rounded-2xl p-5 space-y-4">
+              <div class="flex items-center justify-between border-b border-blue-100 pb-2.5">
+                <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                  <span
+                    class="w-6 h-6 rounded-lg bg-sky-500 text-white text-xs flex items-center justify-center">B</span>
+                  <span>Tải File Dữ liệu lên <span class="text-rose-500">*</span></span>
+                </h3>
+                <button type="button" onclick="loadSampleIntoPreview('retail_sales')"
+                  class="text-[11px] font-bold text-blue-600 hover:underline">
+                  Nạp file mẫu Bán lẻ
+                </button>
+              </div>
+
+              <div id="dropZone"
+                class="dropzone-area rounded-2xl p-6 text-center cursor-pointer flex flex-col items-center justify-center gap-2.5 min-h-[155px]">
+                <div
+                  class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl shadow-sm">
+                  <i class="fa-solid fa-file-arrow-up"></i>
+                </div>
+                <div>
+                  <p class="font-bold text-slate-800 text-xs sm:text-sm">Kéo &amp; thả file vào đây hoặc bấm để chọn
+                    file từ máy</p>
+                  <p class="text-[11px] text-slate-500 mt-0.5">Hỗ trợ: .xlsx, .xls, .csv, .json</p>
+                </div>
+                <input id="fileInput" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt,.json" class="hidden" />
+              </div>
+
+              <!-- Paste Raw Data -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label for="pasteDataInput" class="text-[11px] font-bold text-slate-600">Hoặc dán bảng CSV / Google
+                    Sheets:</label>
+                  <button type="button" onclick="parsePastedText()"
+                    class="text-[11px] font-bold text-blue-600 hover:underline">Đọc dữ liệu dán →</button>
+                </div>
+                <textarea id="pasteDataInput" rows="2"
+                  placeholder="Thang,Kenh,Doanh_Thu,Chi_Phi&#10;2026-01,Shopee,120000000,80000000"
+                  class="w-full rounded-xl border border-blue-200 bg-white/90 p-2.5 text-xs font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+              </div>
+
+              <div id="ingestErrorBox"
+                class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
+              </div>
+
+              <!-- Preview Table -->
+              <div id="previewContent" class="hidden space-y-2 pt-2 border-t border-blue-100">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold text-slate-800">Xem trước cấu trúc dữ liệu:</span>
+                  <span id="previewBadge"
+                    class="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[11px] font-bold">0 dòng</span>
+                </div>
+                <div id="previewColsChips" class="flex flex-wrap gap-1.5"></div>
+                <div class="overflow-x-auto max-h-40 rounded-xl border border-blue-100">
+                  <table id="previewTable" class="w-full text-left text-xs border-collapse"></table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+              <p id="readinessHint" class="text-xs font-semibold text-amber-700">
+                <i class="fa-solid fa-circle-info mr-1"></i> Vui lòng điền đủ Bối cảnh Doanh nghiệp (A) và nạp Dữ liệu
+                (B) để bắt đầu.
+              </p>
+              <button type="button" id="btnRunAgent" onclick="startAgentPipeline()" disabled
+                class="btn-azure text-xs disabled:opacity-40 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-play"></i>
+                <span>Chạy AI Agent Phân tích Sâu</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCENE 2: AI PIPELINE ==================== -->
+    <section id="scene2" class="app-scene">
+      <div class="glass-shell rounded-3xl max-w-3xl mx-auto p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col items-center text-center space-y-4">
+          <div class="relative w-24 h-24 flex items-center justify-center">
+            <span class="hud-ring inset-0"></span>
+            <span class="hud-ring hud-ring-inner"></span>
+            <div
+              class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-blue-500/35">
+              <i class="fa-solid fa-microchip animate-pulse"></i>
+            </div>
+          </div>
+          <div>
+            <h2 id="pipelineHeadline" class="text-xl font-extrabold text-slate-900">AI Agent đang phân tích theo bối
+              cảnh...</h2>
+            <p id="pipelineSub" class="text-xs text-slate-500 mt-1">Đang khởi tạo pipeline chuẩn hóa &amp; đối chiếu mục
+              tiêu</p>
+          </div>
+          <div class="w-full bg-blue-100 rounded-full h-2.5 overflow-hidden">
+            <div id="pipelineProgressBar"
+              class="bg-gradient-to-r from-blue-600 to-sky-400 h-2.5 rounded-full transition-all duration-300"
+              style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div id="pipelineStepsList" class="space-y-2.5"></div>
+
+        <div class="rounded-2xl bg-slate-900 text-sky-300 p-4 font-mono text-[11px] space-y-1 max-h-40 overflow-y-auto"
+          id="pipelineConsole"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCENE 3: BI WORKSPACE ==================== -->
+    <section id="scene3" class="app-scene space-y-5">
+      <!-- Business Context & Dataset Header -->
+      <div class="glass-shell rounded-2xl p-4 sm:p-5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-sm">
+              <i class="fa-solid fa-chart-pie"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 id="wsDatasetTitle" class="font-extrabold text-slate-900 text-base">Chưa có dữ liệu</h2>
+                <span id="wsHealthBadge"
+                  class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-blue-100 text-blue-800">Health:
+                  --/100</span>
+              </div>
+              <p id="wsDatasetMeta" class="text-xs text-slate-500">0 dòng · 0 cột</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="runAutoClean()" id="btnQuickClean" class="btn-outline-azure text-xs !py-1.5">
+              <i class="fa-solid fa-wand-magic-sparkles text-sky-500"></i>
+              <span>Làm sạch 1-Click</span>
+            </button>
+            <button type="button" onclick="exportExcel()" id="btnHeaderExport"
+              class="btn-outline-azure text-xs !py-1.5">
+              <i class="fa-solid fa-file-excel text-emerald-600"></i>
+              <span>Xuất Excel</span>
+            </button>
+            <button type="button" onclick="exportWord()" class="btn-outline-azure text-xs !py-1.5">
+              <i class="fa-solid fa-file-word text-blue-700"></i>
+              <span>Xuất Word</span>
+            </button>
+            <button type="button" onclick="goToScene(1)" class="btn-azure text-xs !py-1.5">
+              <i class="fa-solid fa-plus"></i>
+              <span>Phân tích mới</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Active Context Strip -->
+        <div id="wsContextStrip"
+          class="p-3 rounded-xl bg-blue-50/80 border border-blue-200/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+        </div>
+      </div>
+
+      <!-- Alert Chips -->
+      <div id="wsAlertChips" class="flex flex-wrap gap-2"></div>
+
+      <!-- 4 KPI Cards -->
+      <div id="wsKpiGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+      <!-- Workspace Tabs Navigation -->
+      <div class="glass-shell rounded-2xl p-2 flex items-center gap-1.5 overflow-x-auto no-print">
+        <button type="button" class="ws-tab-btn is-active" data-ws-tab="dashboard" onclick="switchWsTab('dashboard')">
+          <i class="fa-solid fa-chart-column"></i> Dashboard Đa chiều
+        </button>
+        <button type="button" class="ws-tab-btn" data-ws-tab="executive" onclick="switchWsTab('executive')">
+          <i class="fa-solid fa-file-invoice-dollar"></i> Báo cáo Phân tích Kinh doanh
+        </button>
+        <button type="button" class="ws-tab-btn" data-ws-tab="insights" onclick="switchWsTab('insights')">
+          <i class="fa-solid fa-lightbulb"></i> Insight &amp; Kế hoạch
+        </button>
+        <button type="button" class="ws-tab-btn" data-ws-tab="quality" onclick="switchWsTab('quality')">
+          <i class="fa-solid fa-broom"></i> Làm sạch &amp; Chất lượng
+        </button>
+        <button type="button" class="ws-tab-btn" data-ws-tab="explorer" onclick="switchWsTab('explorer')">
+          <i class="fa-solid fa-table"></i> Khám phá bảng
+        </button>
+        <button type="button" class="ws-tab-btn" data-ws-tab="export" onclick="switchWsTab('export')">
+          <i class="fa-solid fa-file-export"></i> Xuất báo cáo
+        </button>
+      </div>
+
+      <!-- TAB 1: MULTI-DIMENSIONAL DASHBOARD -->
+      <div id="wsTab-dashboard" class="ws-tab-panel is-active space-y-4">
+        <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 no-print">
+          <div class="text-xs font-extrabold text-slate-700 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-blue-600"></i>
+            <span>Tùy chỉnh trục phân tích đa chiều:</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 text-xs">
+            <label class="flex items-center gap-1.5 font-semibold text-slate-600">
+              <span>Chỉ số chính (Y1):</span>
+              <select id="selectMetricCol" onchange="updateChartsFromSelectors()"
+                class="rounded-xl border border-blue-200 bg-white px-2.5 py-1.5 font-bold text-blue-800 focus:outline-none"></select>
+            </label>
+            <label class="flex items-center gap-1.5 font-semibold text-slate-600">
+              <span>Chỉ số đối chiếu (Y2):</span>
+              <select id="selectSecondaryCol" onchange="updateChartsFromSelectors()"
+                class="rounded-xl border border-blue-200 bg-white px-2.5 py-1.5 font-bold text-sky-700 focus:outline-none"></select>
+            </label>
+            <label class="flex items-center gap-1.5 font-semibold text-slate-600">
+              <span>Phân nhóm (X):</span>
+              <select id="selectGroupCol" onchange="updateChartsFromSelectors()"
+                class="rounded-xl border border-blue-200 bg-white px-2.5 py-1.5 font-bold text-blue-800 focus:outline-none"></select>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          <div class="lg:col-span-7 glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 id="trendChartTitle" class="text-sm font-extrabold text-slate-800">Xu hướng theo chuỗi</h3>
+              <span class="text-[11px] font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-md">Trend
+                Analysis</span>
+            </div>
+            <div class="h-80 relative"><canvas id="trendChartCanvas"></canvas></div>
+          </div>
+
+          <div class="lg:col-span-5 glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 id="paretoChartTitle" class="text-sm font-extrabold text-slate-800">Tỷ trọng đóng góp (Pareto)</h3>
+              <span class="text-[11px] font-bold text-sky-600 bg-sky-50 px-2.5 py-0.5 rounded-md">Share %</span>
+            </div>
+            <div class="h-80 relative"><canvas id="paretoShareChartCanvas"></canvas></div>
+          </div>
+
+          <div class="lg:col-span-6 glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 id="breakdownChartTitle" class="text-sm font-extrabold text-slate-800">Xếp hạng theo nhóm</h3>
+              <span class="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-md">Ranking</span>
+            </div>
+            <div class="h-80 relative"><canvas id="breakdownChartCanvas"></canvas></div>
+          </div>
+
+          <div class="lg:col-span-6 glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 id="dualCompareTitle" class="text-sm font-extrabold text-slate-800">So sánh Hiệu suất Kép (Y1 vs Y2)
+              </h3>
+              <span class="text-[11px] font-bold text-cyan-700 bg-cyan-50 px-2.5 py-0.5 rounded-md">Efficiency
+                Compare</span>
+            </div>
+            <div class="h-80 relative"><canvas id="dualCompareChartCanvas"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Deep-Dive Analysis & Recommendations directly on Dashboard -->
+        <div class="glass-card rounded-2xl p-5 space-y-3 border-l-4 border-l-blue-600">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass-chart text-blue-600"></i>
+              <span>Phân tích Chuyên sâu từ Dashboard &amp; Đề xuất Hành động</span>
+            </h3>
+            <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full">AI Dashboard
+              Synthesis</span>
+          </div>
+          <div id="dashboardDeepDiveGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs"></div>
+        </div>
+      </div>
+
+      <!-- TAB 2: CORPORATE MANAGEMENT EXECUTIVE REPORT -->
+      <div id="wsTab-executive" class="ws-tab-panel space-y-5">
+        <div class="bg-white rounded-2xl border border-neutral-400 shadow-sm p-6 sm:p-10 space-y-7 text-black">
+
+          <!-- CORPORATE REPORT LETTERHEAD -->
+          <div class="border-b-2 border-black pb-5 space-y-4">
+            <div class="flex flex-wrap items-start justify-between gap-4 text-xs">
+              <div class="space-y-1">
+                <p id="rptCompanyName" class="font-bold text-black text-sm uppercase tracking-wide">TÊN DOANH NGHIỆP</p>
+                <p id="rptIndustry" class="text-neutral-800 font-normal">Lĩnh vực: —</p>
+                <p class="text-neutral-700 font-normal">Bộ phận lập: Phân tích Kinh doanh (Business Analysis &amp; BI)</p>
+              </div>
+              <div class="text-left sm:text-right space-y-1">
+                <p id="rptCode" class="font-normal text-black">Số: BCQT-01</p>
+                <p id="rptDate" class="text-neutral-800 font-normal">Ngày lập: —</p>
+                <p id="rptSource" class="text-neutral-700 font-normal">Nguồn dữ liệu: —</p>
+              </div>
+            </div>
+
+            <div class="text-center pt-2 space-y-1.5">
+              <h2 class="text-xl sm:text-2xl font-bold text-black uppercase tracking-tight">BÁO CÁO PHÂN TÍCH KINH DOANH</h2>
+              <p id="rptObjective" class="text-xs sm:text-sm font-normal text-neutral-900"></p>
+              <p id="rptQuestion" class="text-xs font-normal text-neutral-700 italic max-w-3xl mx-auto"></p>
+            </div>
+          </div>
+
+          <!-- I: GIỚI THIỆU TỔNG QUAN DOANH NGHIỆP & BỐI CẢNH PHÂN TÍCH -->
+          <section class="space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h3 class="text-sm font-bold text-black uppercase tracking-wide">
+                I. Giới thiệu Tổng quan Doanh nghiệp &amp; Bối cảnh Phân tích
+              </h3>
+              <span id="execQuestionBadge"
+                class="text-[11px] font-normal text-neutral-800"></span>
+            </div>
+            <div id="rptSummaryKpis" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div>
+            <div id="chapter1Narrative" class="space-y-2.5 text-xs sm:text-sm font-normal text-neutral-900 leading-relaxed"></div>
+            <div id="execDirectAnswer"
+              class="text-xs sm:text-sm font-normal text-neutral-900 leading-relaxed space-y-1.5">
+            </div>
+          </section>
+
+          <!-- II: PHÂN TÍCH & ĐÁNH GIÁ HOẠT ĐỘNG KINH DOANH (BALANCED SCORECARD & DASHBOARD) -->
+          <section class="space-y-4">
+            <h3 class="text-sm font-bold text-black uppercase tracking-wide">
+              II. Phân tích &amp; Đánh giá Hoạt động Kinh doanh (Balanced Scorecard)
+            </h3>
+
+            <!-- 2.1 - 2.4 Dynamic BSC Perspectives (auto-omits any perspective with no data) -->
+            <div id="bscPerspectivesContainer" class="space-y-3.5"></div>
+
+            <!-- Cơ cấu Doanh thu - Chi phí - Hiệu quả theo Phân khúc -->
+            <div class="space-y-2 pt-1">
+              <h4 class="text-xs font-bold text-black uppercase tracking-wide">Bảng Phân tích Cơ cấu &amp; Hiệu suất theo Phân khúc</h4>
+              <div class="overflow-x-auto rounded-lg border border-neutral-300">
+                <table id="groupEfficiencyTable" class="w-full text-left text-xs border-collapse font-normal text-black"></table>
+              </div>
+            </div>
+
+            <!-- Hệ thống Biểu đồ Dashboard & Phân tích Chuyên sâu -->
+            <div class="space-y-3 pt-1">
+              <h4 class="text-xs font-bold text-black uppercase tracking-wide">Hệ thống Biểu đồ Dashboard &amp; Phân tích Chuyên sâu</h4>
+              <div id="rptDashboardChartsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+              <div class="overflow-x-auto rounded-lg border border-neutral-300">
+                <table id="execDeepDiveTable" class="w-full text-left text-xs border-collapse font-normal text-black"></table>
+              </div>
+            </div>
+
+            <!-- Điểm Bất thường (ẩn tự động nếu không có dữ liệu bất thường) -->
+            <div id="anomalySectionWrapper" class="space-y-2 pt-1">
+              <h4 class="text-xs font-bold text-black uppercase tracking-wide">Kiểm soát Rủi ro &amp; Các Điểm Bất thường (Outliers IQR)</h4>
+              <div id="anomalyContainer" class="text-xs font-normal text-black"></div>
+            </div>
+          </section>
+
+          <!-- III: ĐỀ XUẤT GIẢI PHÁP VÀ KIẾN NGHỊ -->
+          <section class="space-y-4">
+            <h3 class="text-sm font-bold text-black uppercase tracking-wide">
+              III. Đề xuất Giải pháp và Kiến nghị Kinh doanh
+            </h3>
+
+            <div class="space-y-2">
+              <h4 class="text-xs font-bold text-black uppercase tracking-wide">3.1. Đánh giá Tổng quan Những Mặt Đạt được &amp; Hạn chế</h4>
+              <div id="strengthsLimitationsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-normal text-black"></div>
+            </div>
+
+            <div class="space-y-2">
+              <h4 class="text-xs font-bold text-black uppercase tracking-wide">3.2. Ma trận Quyết định Kinh doanh (Scale / Optimize / Mitigate)</h4>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="decisionMatrixGrid"></div>
+            </div>
+
+            <div class="space-y-3">
+              <h4 class="text-xs font-bold text-black uppercase tracking-wide">3.3. Giải pháp Nâng cao Hiệu quả Kinh doanh &amp; Chỉ tiêu KPI</h4>
+              <div id="execActionPlanTable" class="space-y-4 text-xs font-normal text-black"></div>
+            </div>
+          </section>
+
+          <!-- PHẦN PHÊ DUYỆT CỦA BAN LÃNH ĐẠO -->
+          <section class="space-y-4 pt-4 border-t border-black">
+            <div class="flex justify-end pt-2 text-center text-xs">
+              <div class="w-full sm:w-80 p-5 rounded-lg border border-neutral-400 bg-white space-y-16">
+                <div>
+                  <p class="font-bold text-black uppercase">BAN GIÁM ĐỐC / LÃNH ĐẠO PHÊ DUYỆT</p>
+                  <p class="text-[11px] font-normal text-neutral-700 mt-0.5">(Kiểm duyệt &amp; Ký duyệt ban hành)</p>
+                </div>
+                <p class="text-[11px] font-normal text-neutral-600 italic">(Ký, ghi rõ họ tên &amp; đóng dấu)</p>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- TAB 3: INSIGHTS & ACTION PLAN -->
+      <div id="wsTab-insights" class="ws-tab-panel space-y-4">
+        <div id="insightsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+
+      <!-- TAB 4: DATA QUALITY & CLEANING -->
+      <div id="wsTab-quality" class="ws-tab-panel space-y-4">
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-sm font-extrabold text-slate-900">Hồ sơ chất lượng từng cột (Data Profiling)</h3>
+              <p class="text-xs text-slate-500">Phát hiện kiểu dữ liệu, giá trị thiếu, độ lệch chuẩn và ngoại lai (IQR).
+              </p>
+            </div>
+            <button type="button" onclick="runAutoClean()" class="btn-azure text-xs">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Làm sạch tự động 1-Click
+            </button>
+          </div>
+          <div id="cleanReportBanner"
+            class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
+          </div>
+          <div class="overflow-x-auto rounded-xl border border-blue-100">
+            <table id="qualityTable" class="w-full text-left text-xs border-collapse"></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: DATA EXPLORER -->
+      <div id="wsTab-explorer" class="ws-tab-panel space-y-4">
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <h3 class="text-sm font-extrabold text-slate-900">Bảng dữ liệu chi tiết</h3>
+            <div class="flex items-center gap-2">
+              <div class="relative">
+                <i
+                  class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input id="explorerSearch" type="text" oninput="renderExplorerTable()"
+                  placeholder="Tìm kiếm trong bảng..."
+                  class="pl-8 pr-3 py-1.5 rounded-xl border border-blue-200 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400" />
+              </div>
+              <span id="explorerCountBadge" class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg">0
+                dòng</span>
+            </div>
+          </div>
+          <div class="overflow-x-auto max-h-[460px] rounded-xl border border-blue-100">
+            <table id="explorerTable" class="w-full text-left text-xs border-collapse"></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: EXPORT -->
+      <div id="wsTab-export" class="ws-tab-panel space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-file-word"></i>
+            </div>
+            <h4 class="font-extrabold text-slate-900 text-sm">Xuất Báo cáo Word (.doc)</h4>
+            <p class="text-xs text-slate-500">Xuất trọn bộ Báo cáo Quản trị 7 mục chuẩn doanh nghiệp kèm khung ký duyệt.
+            </p>
+            <button type="button" id="btnExportWord" onclick="exportWord()" class="btn-azure w-full text-xs">Tải file
+              Word (.doc)</button>
+          </div>
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-file-excel"></i>
+            </div>
+            <h4 class="font-extrabold text-slate-900 text-sm">Xuất Excel (.xlsx)</h4>
+            <p class="text-xs text-slate-500">Gồm sheet dữ liệu đã làm sạch, thống kê cột và sheet bối cảnh quản trị.
+            </p>
+            <button type="button" id="btnExportExcel" onclick="exportExcel()"
+              class="btn-outline-azure w-full text-xs">Tải file .xlsx</button>
+          </div>
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-file-csv"></i>
+            </div>
+            <h4 class="font-extrabold text-slate-900 text-sm">Xuất CSV chuẩn UTF-8</h4>
+            <p class="text-xs text-slate-500">Phù hợp để đưa vào Power BI, Tableau, Python hoặc Google Sheets.</p>
+            <button type="button" id="btnExportCsv" onclick="exportCsv()" class="btn-outline-azure w-full text-xs">Tải
+              file .csv</button>
+          </div>
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-print"></i>
+            </div>
+            <h4 class="font-extrabold text-slate-900 text-sm">In / Lưu Báo cáo PDF</h4>
+            <p class="text-xs text-slate-500">Mở hộp thoại in tối ưu bố cục Báo cáo Quản trị &amp; Khung Ký duyệt.</p>
+            <button type="button" id="btnExportPdf" onclick="printExecutiveReport()" class="btn-azure w-full text-xs">In
+              / Xuất PDF</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FLOATING AI DATA COPILOT -->
+  <button type="button" id="chatFab" onclick="toggleChat(true)" class="chat-fab no-print">
+    <i class="fa-solid fa-robot text-base"></i>
+    <span>Hỏi AI Copilot</span>
+  </button>
+
+  <section id="chatDrawer" class="chat-drawer glass-shell hidden no-print" role="dialog" aria-label="AI Data Copilot">
+    <header
+      class="bg-gradient-to-r from-blue-700 to-sky-600 text-white px-4 py-3 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+          <i class="fa-solid fa-robot text-sm"></i>
+        </div>
+        <div>
+          <h3 class="text-xs font-extrabold">AzurePulse Data Copilot</h3>
+          <p class="text-[10px] text-blue-100">Tư vấn theo bối cảnh &amp; số liệu thực tế</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <select id="copilotMode"
+          class="bg-white/15 text-white text-[10px] font-bold rounded-lg px-2 py-1 border border-white/25 focus:outline-none">
+          <option value="analyst" class="text-slate-900">Data Analyst</option>
+          <option value="executive" class="text-slate-900">Executive BI</option>
+          <option value="engineer" class="text-slate-900">Data Engineer</option>
+        </select>
+        <button type="button" onclick="toggleChat(false)" class="text-white/80 hover:text-white">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+    </header>
+
+    <div id="chatMessages" class="flex-1 p-3.5 overflow-y-auto space-y-3 bg-white/75 text-xs">
+      <div class="p-3 rounded-2xl rounded-tl-sm bg-blue-50 border border-blue-100 text-slate-700 leading-relaxed">
+        👋 Xin chào! Hãy hoàn thành <strong>Bối cảnh Doanh nghiệp</strong> và <strong>Nạp Dữ liệu</strong>, sau đó hỏi
+        tôi bất kỳ điều gì để hỗ trợ ra quyết định!
+      </div>
+    </div>
+
+    <div class="px-3 py-2 bg-blue-50/70 border-t border-blue-100 flex flex-wrap gap-1.5 shrink-0" id="chatQuickPrompts">
+      <button type="button" onclick="sendQuickPrompt('Trả lời câu hỏi quản trị theo bối cảnh')"
+        class="px-2.5 py-1 rounded-full bg-white border border-blue-200 text-[10px] font-bold text-blue-700 hover:bg-blue-100">🎯
+        Trả lời quản trị</button>
+      <button type="button" onclick="sendQuickPrompt('Nhóm nào đang dẫn đầu?')"
+        class="px-2.5 py-1 rounded-full bg-white border border-blue-200 text-[10px] font-bold text-blue-700 hover:bg-blue-100">🏆
+        Top dẫn đầu</button>
+      <button type="button" onclick="sendQuickPrompt('Có điểm bất thường hay rủi ro nào không?')"
+        class="px-2.5 py-1 rounded-full bg-white border border-blue-200 text-[10px] font-bold text-blue-700 hover:bg-blue-100">⚠️
+        Điểm bất thường</button>
+      <button type="button" onclick="sendQuickPrompt('Đề xuất hành động tiếp theo')"
+        class="px-2.5 py-1 rounded-full bg-white border border-blue-200 text-[10px] font-bold text-blue-700 hover:bg-blue-100">📋
+        Đề xuất</button>
+    </div>
+
+    <form id="chatForm" onsubmit="handleChatSubmit(event)"
+      class="p-3 bg-white border-t border-blue-100 flex items-center gap-2 shrink-0">
+      <input id="chatInput" type="text" placeholder="Hỏi về quyết định, xu hướng, rủi ro..." autocomplete="off"
+        class="flex-1 rounded-xl border border-blue-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      <button type="submit" class="btn-azure !p-2 !px-3.5 text-xs">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </form>
+  </section>
+
+  <!-- HUMAN-IN-THE-LOOP REVIEW GATE AFTER CLEANING -->
+  <div id="humanReviewGate" class="hidden fixed inset-0 z-[60] bg-slate-900/65 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto">
+    <div class="min-h-full flex items-center justify-center">
+      <div class="w-[96vw] rounded-2xl border-2 border-blue-400 bg-white shadow-2xl p-5 sm:p-6 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-blue-200 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center">
+              <i class="fa-solid fa-user-check"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900">Trạm Kiểm duyệt 1 · Kiểm tra Dữ liệu Sau Làm sạch</h3>
+              <p class="text-xs text-slate-600">Vui lòng kiểm tra kết quả làm sạch dữ liệu trước khi cho phép Agent chạy phân tích sâu &amp; xuất Dashboard.</p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-extrabold">Chờ phê duyệt</span>
+        </div>
+
+        <div id="reviewCleanSummary" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs"></div>
+
+        <div class="space-y-2 text-xs">
+          <p class="font-bold text-slate-800">Lựa chọn nguồn dữ liệu để phân tích sâu:</p>
+          <div class="flex flex-wrap gap-3">
+            <label
+              class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-blue-300 cursor-pointer font-bold text-blue-900">
+              <input type="radio" name="reviewDataChoice" value="cleaned" checked
+                onchange="renderReviewPreviewTable()" />
+              <span>Dùng bản Đã làm sạch (Khuyên dùng)</span>
+            </label>
+            <label
+              class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-slate-200 cursor-pointer font-semibold text-slate-700">
+              <input type="radio" name="reviewDataChoice" value="raw" onchange="renderReviewPreviewTable()" />
+              <span>Giữ nguyên dữ liệu gốc</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <p class="text-[11px] font-bold text-blue-800"><i class="fa-solid fa-pen mr-1"></i> Bạn có thể bấm trực tiếp vào bất kỳ ô nào trong bảng dưới để tự sửa giá trị, hoặc bấm nút xóa dòng:</p>
+          <div class="overflow-x-auto max-h-72 rounded-xl border border-blue-200 bg-white">
+            <table id="reviewCleanedTable" class="w-full text-left text-xs border-collapse"></table>
+          </div>
+        </div>
+
+        <!-- Human Cleaning Modification Input -->
+        <div class="p-3.5 rounded-xl bg-white border border-blue-200 space-y-2.5 text-xs">
+          <label for="humanCleanInstructions" class="font-extrabold text-slate-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-pen-to-square text-blue-600"></i>
+            <span>Yêu cầu sửa dữ liệu bổ sung của con người (Tùy chọn)</span>
+          </label>
+          <textarea id="humanCleanInstructions" rows="2"
+            placeholder='VD: "đổi tên cột Sales_VND thành Doanh_Thu; thêm cột Loi_Nhuan = Doanh_Thu - Cost_VND; xóa Sales_VND < 1000000; sắp xếp theo Doanh_Thu giảm dần"...'
+            class="w-full rounded-xl border border-blue-200 bg-blue-50/30 p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+          <div class="flex flex-wrap items-center justify-end gap-2">
+            <button id="btnUndoCleanEdit" type="button" onclick="undoHumanCleanEdit()"
+              class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition">
+              <i class="fa-solid fa-rotate-left text-[11px]"></i>
+              <span>Quay lại trạng thái trước</span>
+            </button>
+            <button type="button" onclick="applyHumanCleanEdit()"
+              class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition">
+              <span>Áp dụng yêu cầu sửa</span>
+              <i class="fa-solid fa-arrow-right text-[11px]"></i>
+            </button>
+          </div>
+          <div id="humanCleanFeedback"
+            class="hidden text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1.5">
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+          <button type="button" onclick="goToScene(1)" class="btn-outline-azure text-xs">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại chỉnh sửa
+          </button>
+          <button type="button" onclick="approveCleaningAndAnalyze()" class="btn-azure text-xs">
+            <i class="fa-solid fa-check-double"></i>
+            <span>Phê duyệt Làm sạch &amp; Chạy Phân tích →</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUMAN-IN-THE-LOOP GATE 2: APPROVE OR REVISE ANALYSIS BEFORE CREATING REPORT -->
+  <div id="humanAnalysisGate" class="hidden fixed inset-0 z-[60] bg-slate-900/65 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto">
+    <div class="min-h-full flex items-center justify-center">
+      <div class="w-[96vw] rounded-2xl border-2 border-sky-400 bg-white shadow-2xl p-5 sm:p-6 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-sky-200 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center">
+              <i class="fa-solid fa-clipboard-check"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900">Trạm Kiểm duyệt 2 · Duyệt Kết quả Phân tích trước khi Tạo Báo cáo</h3>
+              <p class="text-xs text-slate-600">Xem trước phát hiện của AI Agent. Bạn có thể nhập nhận xét để Agent chỉnh sửa trực tiếp ngay tại đây, hoặc phê duyệt để tạo Dashboard &amp; Báo cáo.</p>
+            </div>
+          </div>
+          <span id="analysisGateBadge"
+            class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-extrabold">Chờ duyệt tạo báo cáo</span>
+        </div>
+
+        <div id="analysisReviewPreview"
+          class="p-4 sm:p-5 rounded-xl bg-sky-50/40 border border-sky-200 text-xs text-slate-700 leading-relaxed space-y-1.5 max-h-[48vh] overflow-y-auto">
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-white border border-sky-200 space-y-2 text-xs">
+          <label for="humanAnalysisComment" class="block font-extrabold text-slate-800">
+            <i class="fa-solid fa-comment-dots text-sky-600 mr-1"></i>
+            Nhận xét / Yêu cầu chỉnh sửa lại phân tích (hoặc ghi chú phê duyệt):
+          </label>
+          <textarea id="humanAnalysisComment" rows="2"
+            placeholder='VD: "phần phân tích các nhóm chỉ số cốt lõi, thêm lợi nhuận", "chỉ phân tích TikTok Shop", "bỏ qua Cửa hàng", hoặc "phân tích theo Khu_Vuc"...'
+            class="w-full rounded-xl border border-sky-200 bg-sky-50/30 p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-sky-400"></textarea>
+          <div id="analysisRevisionFeedback"
+            class="hidden text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1.5">
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="reviseAnalysisWithComment()" class="btn-outline-azure text-xs">
+              <i class="fa-solid fa-rotate-left"></i>
+              <span>Chỉnh sửa lại phân tích theo nhận xét</span>
+            </button>
+            <button id="btnUndoAnalysisRevise" type="button" onclick="undoAnalysisRevision()"
+              class="hidden btn-outline-azure text-xs !border-slate-300 !text-slate-700">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              <span>Quay lại trạng thái trước</span>
+            </button>
+          </div>
+          <button type="button" onclick="approveAnalysisAndBuildReport()" class="btn-azure text-xs">
+            <i class="fa-solid fa-check-double"></i>
+            <span>Phê duyệt &amp; Tạo Báo cáo + Dashboard →</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SETTINGS -->
+  <div id="settingsModal"
+    class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4 no-print">
+    <div class="glass-shell rounded-3xl max-w-md w-full overflow-hidden">
+      <div class="bg-white/80 border-b border-blue-100 px-5 py-3.5 flex items-center justify-between">
+        <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-blue-600"></i> Cài đặt AI Agent
+        </h3>
+        <button type="button" onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-700"><i
+            class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="p-5 space-y-4 text-xs">
+        <div>
+          <label for="geminiKeyInput" class="block font-bold text-slate-700 mb-1">API Key AI (Google Gemini / OpenAI / Groq / OpenRouter)</label>
+          <div class="flex gap-2">
+            <input id="geminiKeyInput" type="password" placeholder="AIza... (Gemini) hoặc sk-... / gsk_..."
+              class="flex-1 rounded-xl border border-blue-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            <button type="button" onclick="testGeminiConnection()"
+              class="btn-outline-azure text-xs shrink-0 !py-1.5">Kiểm tra &amp; Lưu</button>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">Hỗ trợ key miễn phí từ <strong>aistudio.google.com</strong> (AIza...), <strong>console.groq.com</strong> (gsk_...), hoặc OpenAI / OpenRouter (sk-...). Key lưu cục bộ trên trình duyệt để kích hoạt hiểu ngôn ngữ tự nhiên cho Kiểm duyệt, Sửa dữ liệu &amp; Hỏi đáp.</p>
+        </div>
+        <div>
+          <label for="geminiModelSelect" class="block font-bold text-slate-700 mb-1">Model Gemini ưu tiên (khi dùng key AIza...)</label>
+          <select id="geminiModelSelect"
+            class="w-full rounded-xl border border-blue-200 px-3 py-2 font-semibold focus:outline-none">
+            <option value="gemini-2.5-flash">gemini-2.5-flash (Khuyên dùng · Nhanh &amp; Thông minh)</option>
+            <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite (Nhẹ &amp; Ít giới hạn)</option>
+            <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+            <option value="gemini-flash-latest">gemini-flash-latest</option>
+          </select>
+        </div>
+        <div id="apiTestStatus" class="hidden p-2.5 rounded-xl text-[11px] font-bold"></div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeSettingsModal()" class="btn-outline-azure text-xs">Đóng</button>
+          <button type="button" onclick="saveSettings()" class="btn-azure text-xs">Lưu cài đặt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: HISTORY -->
+  <div id="historyModal"
+    class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4 no-print">
+    <div class="glass-shell rounded-3xl max-w-lg w-full overflow-hidden">
+      <div class="bg-white/80 border-b border-blue-100 px-5 py-3.5 flex items-center justify-between">
+        <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+          <i class="fa-solid fa-clock-rotate-left text-blue-600"></i> Lịch sử phân tích gần đây
+        </h3>
+        <button type="button" onclick="closeHistoryModal()" class="text-slate-400 hover:text-slate-700"><i
+            class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="historyListBody" class="p-5 max-h-80 overflow-y-auto space-y-2.5 text-xs"></div>
+    </div>
+  </div>
+
+  <script src="./data-engine.js"></script>
+  <script src="./app.js"></script>
+</body>
+
+</html>
